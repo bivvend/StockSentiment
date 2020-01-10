@@ -60,10 +60,13 @@ if __name__ == "__main__":
     #Process text to remove unwanted characters
     for sen in sentences:
         X.append(preprocess_text(sen))
-    print(X[3])
+        
     #process labels
     y = data_df[label_col]
-    y = np.array(list(map(lambda x: 1 if x=="positive" else 0, y)))
+    y = np.array(list(map(lambda x: 1 if x==positive_val else 0, y)))
+
+    print(y)
+
     #train test split
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
     #Prepare embedding layer
@@ -102,9 +105,9 @@ if __name__ == "__main__":
     embedding_layer = Embedding(vocab_size, 100, weights=[embedding_matrix], input_length=maxlen , trainable=False)
     model.add(embedding_layer)
     model.add(LSTM(128))
+    model.add(Dense(1, activation='linear'))
 
-    model.add(Dense(1, activation='sigmoid'))
-    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['acc'])
+    model.compile(optimizer='adam', loss='mse', metrics=['acc'])
 
     print(model.summary())
 
@@ -146,4 +149,18 @@ if __name__ == "__main__":
         pickle.dump(tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
     print("Saved tokenizer to disk")
 
-    
+    #make a prediction
+    instance = X[57]
+    print(instance)
+    instance = tokenizer.texts_to_sequences(instance)
+
+    flat_list = []
+    for sublist in instance:
+        for item in sublist:
+            flat_list.append(item)
+
+    flat_list = [flat_list]
+
+    instance = pad_sequences(flat_list, padding='post', maxlen=maxlen)
+
+    print(model.predict(instance))
