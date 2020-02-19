@@ -16,7 +16,7 @@ def n_prev_weekdays(adate, number_of_days_back):
     return weekdays
 
 ticker_list = ['FTSE', 'AAPL','DJI','BP share price']
-save_path="C:\\Github\\StockSentimentTrading\\trends_data.csv"
+save_path="C:\\Github\\StockSentimentTrading\\trends_data\\trends_data.csv"
 
 if __name__ == "__main__":
     weekday_list = n_prev_weekdays(date.today(), 800)
